@@ -1,1 +1,1 @@
-# CUT_Calculator
+# Dynamic Student Task & Study Planner

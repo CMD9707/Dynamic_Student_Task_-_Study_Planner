@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>study planner</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts for modern typography -->
+    <link href="https://googleapis.com" rel="stylesheet">
+
+    <style>
+        /* 1. Global Reset & Variables */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+:root {
+    --bg-color: #f4f7f6;
+    --card-bg: #ffffff;
+    --text-main: #2d3748;
+    --text-muted: #718096;
+    --primary: #4f46e5;
+    --primary-light: #e0e7ff;
+    --accent: #10b981;
+    --border: #e2e8f0;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+/* 2. Layout Wrapper Container */
+.planner-container {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    width: 100%;
+    max-width: 1200px;
+    height: 85vh;
+    background: var(--card-bg);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* 3. Sidebar Panel Styling */
+.sidebar {
+    background-color: #1e1b4b;
+    color: #ffffff;
+    padding: 40px 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.profile h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.profile p {
+    color: #94a3b8;
+    font-size: 0.9rem;
+}
+
+.progress-box h3 {
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+    color: #cbd5e1;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #334155;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 4px;
+}
+
+.progress-box span {
+    font-size: 0.8rem;
+    color: #94a3b8;
+}
+
+.quick-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.stat-card {
+    background: #2e2a72;
+    padding: 15px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    color: #cbd5e1;
+}
+
+.stat-card strong {
+    display: block;
+    font-size: 1.3rem;
+    color: #ffffff;
+    margin-bottom: 2px;
+}
+
+/* 4. Main Panel Canvas Styling */
+.main-content {
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    overflow-y: auto;
+}
+
+.main-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.date-display {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin-top: 5px;
+}
+
+/* 5. Dashboard Internal Components Structure */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 25px;
+}
+
+.grid-block {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+}
+
+.grid-block h2 {
+    font-size: 1.15rem;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+/* Weekly Overview Cards Alignment */
+.days-container {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+}
+
+.day-card {
+    flex: 1;
+    min-width: 120px;
+    background: var(--bg-color);
+    padding: 15px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    border: 1px solid transparent;
+}
+
+.day-card.current {
+    background: var(--primary-light);
+    border-color: var(--primary);
+}
+
+.day-name {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.day-card.current .day-name {
+    color: var(--primary);
+}
+
+.subject {
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.time {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* Checklist Items Styles */
+.todo-items {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.task-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 15px;
+    background: var(--bg-color);
+    border-radius: 10px;
+    transition: background 0.2s ease;
+}
+
+.task-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary);
+    cursor: pointer;
+}
+
+.task-item label {
+    font-size: 0.95rem;
+    cursor: pointer;
+    width: 100%;
+}
+
+.task-item.complete label {
+    text-decoration: line-through;
+    color: var(--text-muted);
+}
+
+/* 6. Responsive Adaptability Design */
+@media (max-width: 900px) {
+    .planner-container {
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+    body {
+        padding: 10px;
+    }
+    .sidebar {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .quick-stats {
+        flex-direction: row;
+    }
+}
+    </style>
+</head>
+<body>
+
+    <div class="planner-container">
+        <!-- Sidebar Tracker -->
+        <aside class="sidebar">
+            <div class="profile">
+                <h2>Study Desk</h2>
+                <p>Welcome back, Learner!</p>
+            </div>
+            <div class="progress-box">
+                <h3>Weekly Goal Progress</h3>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 70%;"></div>
+                </div>
+                <span>70% Complete</span>
+            </div>
+            <div class="quick-stats">
+                <div class="stat-card"><strong>4.5h</strong> Focus Today</div>
+                <div class="stat-card"><strong>12</strong> Tasks Done</div>
+            </div>
+        </aside>
+
+        <!-- Main Dashboard Content -->
+        <main class="main-content">
+            <header class="main-header">
+                <h1>My Study Planner</h1>
+                <p class="date-display">Week of October 26</p>
+            </header>
+
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+                
+                <!-- Weekly Grid Block -->
+                <section class="grid-block weekly-schedule">
+                    <h2>Weekly Overview</h2>
+                    <div class="days-container">
+                        <div class="day-card current">
+                            <span class="day-name">Mon</span>
+                            <span class="subject">Math</span>
+                            <span class="time">09:00 - 11:00</span>
+                        </div>
+                        <div class="day-card">
+                            <span class="day-name">Tue</span>
+                            <span class="subject">Physics</span>
+                            <span class="time">14:00 - 16:00</span>
+                        </div>
+                        <div class="day-card">
+                            <span class="day-name">Wed</span>
+                            <span class="subject">Coding</span>
+                            <span class="time">10:00 - 13:00</span>
+                        </div>
+                        <div class="day-card">
+                            <span class="day-name">Thu</span>
+                            <span class="subject">Biology</span>
+                            <span class="time">11:00 - 12:30</span>
+                        </div>
+                        <div class="day-card">
+                            <span class="day-name">Fri</span>
+                            <span class="subject">History</span>
+                            <span class="time">15:00 - 17:00</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Priority / Tasks Block -->
+                <section class="grid-block task-list">
+                    <h2>Today's Focus Tasks</h2>
+                    <ul class="todo-items">
+                        <li class="task-item complete">
+                            <input type="checkbox" id="t1" checked>
+                            <label for="t1">Revise Calculus Integration</label>
+                        </li>
+                        <li class="task-item">
+                            <input type="checkbox" id="t2">
+                            <label for="t2">Draft Chemistry Essay outline</label>
+                        </li>
+                        <li class="task-item">
+                            <input type="checkbox" id="t3">
+                            <label for="t3">LeetCode Daily Challenge</label>
+                        </li>
+                        <li class="task-item">
+                            <input type="checkbox" id="t4">
+                            <label for="t4">Read UI/UX Case Study</label>
+                        </li>
+                    </ul>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>
